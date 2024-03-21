@@ -12,7 +12,7 @@ func GetApiKey(header http.Header) (string, error) {
 		return "", errors.New("No api key found")
 	}
 	tokenArray := strings.Split(tokenString, " ")
-	if tokenArray[0] != "ApiKey" && len(tokenArray) != 2 {
+	if tokenArray[0] != "ApiKey" || len(tokenArray) != 2 {
 		return "", errors.New("Api Key in wrong format")
 	}
 	return tokenArray[1], nil

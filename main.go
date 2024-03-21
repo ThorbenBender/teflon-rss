@@ -46,7 +46,12 @@ func main() {
 	subRouter.Get("/readiness", HandleReadiness)
 	subRouter.Get("/err", HandleError)
 	subRouter.Post("/users", apiCfg.HandleUserCreate)
-	subRouter.Get("/users", apiCfg.HandleUserGet)
+	subRouter.Get("/users", apiCfg.middlewareAuth(apiCfg.HandleUserRetrieve))
+	subRouter.Post("/feeds", apiCfg.middlewareAuth(apiCfg.HandleFeedCreate))
+	subRouter.Get("/feeds", apiCfg.HandleFeedsRetrieve)
+	subRouter.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.HandleFeedFollowCreate))
+	subRouter.Delete("/feed_follows/{feedFollowID}", apiCfg.HandleFeedFollowDelete)
+	subRouter.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.HandleFeedFollowRetrieve))
 
 	router.Mount("/v1", subRouter)
 

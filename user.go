@@ -2,13 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 
-	"github.com/thorbenbender/teflon-rss/internal/auth"
 	"github.com/thorbenbender/teflon-rss/internal/database"
 )
 
@@ -32,23 +31,17 @@ func (cfg *apiConfig) HandleUserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	user, err := cfg.DB.CreateUser(r.Context(), createUserParams)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldnt create user")
 		return
 	}
 	respondWithJson(w, http.StatusCreated, databaseUserToUser(user))
 }
 
-func (cfg *apiConfig) HandleUserGet(w http.ResponseWriter, r *http.Request) {
-	apiKey, err := auth.GetApiKey(r.Header)
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, err.Error())
-		return
-	}
-	user, err := cfg.DB.GetUserByApiKey(r.Context(), apiKey)
-	if err != nil {
-		respondWithError(w, http.StatusNotFound, "Could not find user")
-		return
-	}
+func (cfg *apiConfig) HandleUserRetrieve(
+	w http.ResponseWriter,
+	r *http.Request,
+	user database.User,
+) {
 	respondWithJson(w, http.StatusOK, databaseUserToUser(user))
 }
