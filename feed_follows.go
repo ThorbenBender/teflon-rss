@@ -75,8 +75,8 @@ func (cfg *apiConfig) HandleFeedFollowRetrieve(
 		return
 	}
 	feedFollows := make([]FeedFollow, 0, len(databaseFeedFollows))
-	for _, feedFollow := range databaseFeedFollows {
-		feedFollows = append(feedFollows, databaseFeedFollowToFeedFollow(feedFollow))
+	for i, feedFollow := range databaseFeedFollows {
+		feedFollows[i] = databaseFeedFollowToFeedFollow(feedFollow)
 	}
 	respondWithJson(w, http.StatusOK, feedFollows)
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -52,6 +53,7 @@ func main() {
 	subRouter.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.HandleFeedFollowCreate))
 	subRouter.Delete("/feed_follows/{feedFollowID}", apiCfg.HandleFeedFollowDelete)
 	subRouter.Get("/feed_follows", apiCfg.middlewareAuth(apiCfg.HandleFeedFollowRetrieve))
+	subRouter.Get("/posts", apiCfg.middlewareAuth(apiCfg.HandlePostRetrieve))
 
 	router.Mount("/v1", subRouter)
 
@@ -59,6 +61,11 @@ func main() {
 		Addr:    ":" + port,
 		Handler: router,
 	}
+
+	const collectionCurrency = 10
+	const collectionInterval = time.Minute
+	go startScraping(dbQueries, collectionCurrency, collectionInterval)
+
 	log.Printf("Server listening on port %s", port)
 
 	log.Fatal(server.ListenAndServe())
